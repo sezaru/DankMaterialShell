@@ -63,109 +63,37 @@
               };
             };
 
-            programs.niri.settings = lib.mkMerge [
+            programs.niri.settings = lib.mkMerge let
+              quickShellIpc = spawn "${cfg.quickshell.package}/bin/qs" "-c" "DankMaterialShell" "ipc" "call";
+              in [
               (lib.mkIf cfg.enableKeybinds {
                 binds = {
-                  "Mod+Space".action.spawn = [
-                    "qs"
-                    "-c"
-                    "DankMaterialShell"
-                    "ipc"
-                    "call"
-                    "spotlight"
-                    "toggle"
-                  ];
-                  "Mod+V".action.spawn = [
-                    "qs"
-                    "-c"
-                    "DankMaterialShell"
-                    "ipc"
-                    "call"
-                    "clipboard"
-                    "toggle"
-                  ];
-                  "Mod+M".action.spawn = [
-                    "qs"
-                    "-c"
-                    "DankMaterialShell"
-                    "ipc"
-                    "call"
-                    "processlist"
-                    "toggle"
-                  ];
-                  "Mod+Comma".action.spawn = [
-                    "qs"
-                    "-c"
-                    "DankMaterialShell"
-                    "ipc"
-                    "call"
-                    "settings"
-                    "toggle"
-                  ];
-                  "Super+Alt+L".action.spawn = [
-                    "qs"
-                    "-c"
-                    "DankMaterialShell"
-                    "ipc"
-                    "call"
-                    "lock"
-                    "lock"
-                  ];
+                  "Mod+Space".action = quickShellIpc "spotlight" "toggle";
+                  "Mod+V".action = quickShellIpc "clipboard" "toggle";
+                  "Mod+M".action = quickShellIpc "processlist" "toggle";
+                  "Mod+Comma".action = quickShellIpc "settings" "toggle";
+                  "Super+Alt+L".action = quickShellIpc "lock" "lock";
                   "XF86AudioRaiseVolume" = {
                     allow-when-locked = true;
-                    action.spawn = [
-                      "qs"
-                      "-c"
-                      "DankMaterialShell"
-                      "ipc"
-                      "call"
-                      "audio"
-                      "increment"
-                      "3"
-                    ];
+                    action = quickShellIpc "audio" "increment" "3";
                   };
                   "XF86AudioLowerVolume" = {
                     allow-when-locked = true;
-                    action.spawn = [
-                      "qs"
-                      "-c"
-                      "DankMaterialShell"
-                      "ipc"
-                      "call"
-                      "audio"
-                      "decrement"
-                      "3"
-                    ];
+                    action = quickShellIpc "audio" "decrement" "3";
                   };
                   "XF86AudioMute" = {
                     allow-when-locked = true;
-                    action.spawn = [
-                      "qs"
-                      "-c"
-                      "DankMaterialShell"
-                      "ipc"
-                      "call"
-                      "audio"
-                      "mute"
-                    ];
+                    action = quickShellIpc "audio" "mute";
                   };
                   "XF86AudioMicMute" = {
                     allow-when-locked = true;
-                    action.spawn = [
-                      "qs"
-                      "-c"
-                      "DankMaterialShell"
-                      "ipc"
-                      "call"
-                      "audio"
-                      "micmute"
-                    ];
+                    action = quickShellIpc "audio" "micmute";
                   };
                 };
               })
               (lib.mkIf (cfg.enableSpawn) {
                 spawn-at-startup =
-                  [{ command = [ "qs" "-c" "DankMaterialShell" ]; }];
+                  [{ command = [ "${cfg.quickshell.package}/bin/qs" "-c" "DankMaterialShell" ]; }];
               })
             ];
 
