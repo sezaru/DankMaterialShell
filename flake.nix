@@ -40,12 +40,19 @@
               lib.mkEnableOption "DankMaterialShell systemd startup";
             enableSpawn =
               lib.mkEnableOption "DankMaterialShell Niri spawn-at-startup";
+
+            quickshell = {
+              package =  lib.mkPackageOption pkgs "quickshell" {
+                default = quickshell.packages.${pkgs.system}.quickshell;
+                nullable = false;
+              };
+            };
           };
 
           config = lib.mkIf cfg.enable {
             programs.quickshell = {
               enable = true;
-              package = quickshell.packages.${pkgs.system}.quickshell;
+              package = cfg.quickshell.package;
               configs.DankMaterialShell = "${
                   self.packages.${pkgs.system}.dankMaterialShell
                 }/etc/xdg/quickshell/DankMaterialShell";
