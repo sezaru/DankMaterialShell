@@ -46,35 +46,43 @@
               lib.mkEnableOption "DankMaterialShell systemd startup";
             enableSpawn =
               lib.mkEnableOption "DankMaterialShell Niri spawn-at-startup";
-            enableSystemMonitoring = lib.mkEnableOption {
+            enableSystemMonitoring = lib.mkOption {
+              type = lib.types.bool;
               default = true;
               description = "Add needed dependencies to use system monitoring widgets";
             };
-            enableClipboard = lib.mkEnableOption {
+            enableClipboard = lib.mkOption {
+              type = lib.types.bool;
               default = true;
               description = "Add needed dependencies to use the clipboard widget";
             };
-            enableVPN = lib.mkEnableOption {
+            enableVPN = lib.mkOption {
+              type = lib.types.bool;
               default = true;
               description = "Add needed dependencies to use the VPN widget";
             };
-            enableBrigthnessControll = lib.mkEnableOption {
+            enableBrigthnessControl = lib.mkOption {
+              type = lib.types.bool;
               default = true;
               description = "Add needed dependencies to have brightness/backlight support";
             };
-            enableNightMode = lib.mkEnableOption {
+            enableNightMode = lib.mkOption {
+              type = lib.types.bool;
               default = true;
               description = "Add needed dependencies to have night mode support";
             };
-            enableDynamicTheming = lib.mkEnableOption {
+            enableDynamicTheming = lib.mkOption {
+              type = lib.types.bool;
               default = true;
               description = "Add needed dependencies to have dynamic theming support";
             };
-            enableAudioWavelenght = lib.mkEnableOption {
+            enableAudioWavelenght = lib.mkOption {
+              type = lib.types.bool;
               default = true;
               description = "Add needed dependencies to have audio wavelenght support";
             };
-            enableCalendarEvents = lib.mkEnableOption {
+            enableCalendarEvents = lib.mkOption {
+              type = lib.types.bool;
               default = true;
               description = "Add calendar events support via khal";
             };
@@ -143,14 +151,14 @@
               pkgs.libsForQt5.qt5ct
               pkgs.kdePackages.qt6ct
             ]
-            ++ lib.list.optionals cfg.enableSystemMonitoring [dgop.packages.${pkgs.system}.dgop]
-            ++ lib.list.optionals cfg.enableClipboard [pkgs.cliphist pkgs.wl-clipboard]
-            ++ lib.list.optionals cfg.enableVPN [pkgs.glib pkgs.networkmanager]
-            ++ lib.list.optionals cfg.enableBrigthnessControll [pkgs.brightnessctl]
-            ++ lib.list.optionals cfg.enableNightMode [pkgs.gammastep]
-            ++ lib.list.optionals cfg.enableDynamicTheming [pkgs.matugen]
-            ++ lib.list.optionals cfg.enableAudioWavelenght [pkgs.cava]
-            ++ lib.list.optionals cfg.enableCalendarEvents [pkgs.khal];
+            ++ lib.optional cfg.enableSystemMonitoring dgop.packages.${pkgs.system}.dgop
+            ++ lib.optionals cfg.enableClipboard [pkgs.cliphist pkgs.wl-clipboard]
+            ++ lib.optionals cfg.enableVPN [pkgs.glib pkgs.networkmanager]
+            ++ lib.optional cfg.enableBrigthnessControl pkgs.brightnessctl
+            ++ lib.optional cfg.enableNightMode pkgs.gammastep
+            ++ lib.optional cfg.enableDynamicTheming pkgs.matugen
+            ++ lib.optional cfg.enableAudioWavelenght pkgs.cava
+            ++ lib.optional cfg.enableCalendarEvents pkgs.khal;
           };
         };
     };
