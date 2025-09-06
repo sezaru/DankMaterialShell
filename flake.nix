@@ -11,9 +11,13 @@
       url = "github:AvengeMedia/dgop";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    dms-cli = {
+      url = "github:AvengeMedia/danklinux";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
-  outputs = { self, nixpkgs, quickshell, dgop, ... }:
+  outputs = { self, nixpkgs, quickshell, dgop, dms-cli, ... }:
     let
       forEachSystem = fn:
         nixpkgs.lib.genAttrs
@@ -150,6 +154,7 @@
               pkgs.ddcutil
               pkgs.libsForQt5.qt5ct
               pkgs.kdePackages.qt6ct
+              dms-cli.packages.${system}.default
             ]
             ++ lib.optional cfg.enableSystemMonitoring dgop.packages.${pkgs.system}.dgop
             ++ lib.optionals cfg.enableClipboard [pkgs.cliphist pkgs.wl-clipboard]
