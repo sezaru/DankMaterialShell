@@ -154,7 +154,7 @@
               pkgs.ddcutil
               pkgs.libsForQt5.qt5ct
               pkgs.kdePackages.qt6ct
-              dms-cli.packages.${system}.default
+              dms-cli.packages.${pkgs.system}.default
             ]
             ++ lib.optional cfg.enableSystemMonitoring dgop.packages.${pkgs.system}.dgop
             ++ lib.optionals cfg.enableClipboard [pkgs.cliphist pkgs.wl-clipboard]
