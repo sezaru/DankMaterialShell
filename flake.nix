@@ -13,7 +13,7 @@
     };
   };
 
-  outputs = { self, nixpkgs, quickshell, ... }:
+  outputs = { self, nixpkgs, quickshell, dgop, ... }:
     let
       forEachSystem = fn:
         nixpkgs.lib.genAttrs
@@ -143,7 +143,7 @@
               pkgs.libsForQt5.qt5ct
               pkgs.kdePackages.qt6ct
             ]
-            ++ lib.list.optionals cfg.enableSystemMonitoring [inputs.dgop.packages.${pkgs.system}.dgop]
+            ++ lib.list.optionals cfg.enableSystemMonitoring [dgop.packages.${pkgs.system}.dgop]
             ++ lib.list.optionals cfg.enableClipboard [pkgs.cliphist pkgs.wl-clipboard]
             ++ lib.list.optionals cfg.enableVPN [pkgs.glib pkgs.networkmanager]
             ++ lib.list.optionals cfg.enableBrigthnessControll [pkgs.brightnessctl]
