@@ -175,6 +175,58 @@ paru -S dms-shell-git
 nix profile install github:AvengeMedia/DankMaterialShell
 ```
 
+#### nixOS - via home-manager
+
+To install using home-manager, you need to add this repo into your flake inputs:
+
+``` nix
+dankMaterialShell = {
+  url = "github:AvengeMedia/DankMaterialShell/make_niri_optional";
+  inputs.nixpkgs.follows = "nixpkgs";
+};
+```
+
+Then somewhere in your home-manager config, add this to the imports:
+
+``` nix
+imports = [
+  inputs.dankMaterialShell.homeModules.dankMaterialShell.default
+];
+```
+
+If you use Niri, you can import the specific niri module instead:
+
+``` nix
+imports = [
+  inputs.dankMaterialShell.homeModules.dankMaterialShell.niri
+];
+```
+
+You would also need to have `sobidoo/niri` flake in your inputs:
+
+``` nix
+niri = {
+  url = "github:sodiboo/niri-flake";
+  inputs.nixpkgs.follows = "nixpkgs";
+};
+```
+
+And import it in home-manager:
+
+``` nix
+imports = [
+  inputs.niri.homeModules.niri
+];
+```
+
+Now you can enable it with:
+
+``` nix
+programs.dankMaterialShell.enable = true;
+```
+
+There are a lot of possible configurations that you can enable/disable in the flake, check them all [here](nix/options.nix);
+
 #### Other Distributions - via manual installation
 
 **1. Install Quickshell (Varies by Distribution)**
