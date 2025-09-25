@@ -5,7 +5,7 @@
 }: let
     cfg = config.programs.dankMaterialShell;
 in {
-    options.programs.dankMaterialShell.niri = {
+    options.programs.dankMaterialShell = {
         niri = {
             enableKeybinds = lib.mkEnableOption "DankMaterialShell niri keybinds";
             enableSpawn = lib.mkEnableOption "DankMaterialShell niri spawn-at-startup";
