@@ -1,4 +1,4 @@
-{config, pkgs, lib, ...}: let
+{pkgs}: {config, lib, ...}: let
   cfg = config.programs.dankMaterialShell;
 in {
   options.programs.dankMaterialShell = (import ./options.nix { inherit lib pkgs; }).basic;
