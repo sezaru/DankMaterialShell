@@ -2,6 +2,7 @@
     config,
     pkgs,
     lib,
+    dmsPkgs,
     ...
 }: let
     cfg = config.programs.dankMaterialShell;
@@ -62,7 +63,7 @@ in {
             package = cfg.quickshell.package;
 
             configs.dms = "${
-                pkgs.dankMaterialShell
+                dmsPkgs.dankMaterialShell
             }/etc/xdg/quickshell/DankMaterialShell";
             activeConfig = lib.mkIf cfg.enableSystemd "dms";
 
@@ -82,9 +83,9 @@ in {
                 pkgs.libsForQt5.qt5ct
                 pkgs.kdePackages.qt6ct
 
-                pkgs.dmsCli
+                dmsPkgs.dmsCli
             ]
-            ++ lib.optional cfg.enableSystemMonitoring pkgs.dgop
+            ++ lib.optional cfg.enableSystemMonitoring dmsPkgs.dgop
             ++ lib.optionals cfg.enableClipboard [pkgs.cliphist pkgs.wl-clipboard]
             ++ lib.optionals cfg.enableVPN [pkgs.glib pkgs.networkmanager]
             ++ lib.optional cfg.enableBrightnessControl pkgs.brightnessctl
