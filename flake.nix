@@ -48,7 +48,17 @@
             default = self.packages.${system}.dankMaterialShell;
         });
 
-        homeModules.dankMaterialShell.default = import ./nix/default.nix { inherit self dgop dms-cli; };
-        homeModules.dankMaterialShell.niri = import ./nix/niri.nix { inherit self dgop dms-cli; };
+        homeModules.dankMaterialShell.default = {pkgs, ...}: let
+            dmsPkgs = {
+                dmsCli = dms-cli.packages.${pkgs.system}.default;
+                dgop = dgop.packages.${pkgs.system}.dgop;
+                dankMaterialShell = self.packages.${pkgs.system}.dankMaterialShell;
+            };
+        in {
+            imports = [./nix/default.nix];
+            _module.args.dmsPkgs = dmsPkgs;
+        };
+
+        homeModules.dankMaterialShell.niri = import ./nix/niri.nix;
     };
 }

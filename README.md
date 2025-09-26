@@ -194,15 +194,17 @@ imports = [
 ];
 ```
 
-If you use Niri, you can import the specific niri module instead:
+If you use Niri, the `niri` homeModule provides additional options for Niri integration, such as key bindings and spawn:
 
 ``` nix
 imports = [
+  inputs.dankMaterialShell.homeModules.dankMaterialShell.default
   inputs.dankMaterialShell.homeModules.dankMaterialShell.niri
 ];
 ```
 
-You would also need to have `sobidoo/niri` flake in your inputs:
+> [!IMPORTANT]
+> To use the `niri` homeModule, you must have `sobidoo/niri-flake` in your inputs:
 
 ``` nix
 niri = {
@@ -225,7 +227,7 @@ Now you can enable it with:
 programs.dankMaterialShell.enable = true;
 ```
 
-There are a lot of possible configurations that you can enable/disable in the flake, check them all [here](nix/options.nix);
+There are a lot of possible configurations that you can enable/disable in the flake, check [nix/default.nix](nix/default.nix) and [nix/niri.nix](nix/niri.nix) to see them all.
 
 #### Other Distributions - via manual installation
 
