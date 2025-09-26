@@ -364,6 +364,9 @@ binds {
    Mod+X hotkey-overlay-title="Power Menu" {
       spawn "dms" "ipc" "call" "powermenu" "toggle";
    }
+   Mod+C hotkey-overlay-title="Control Center" {
+      spawn "dms" "ipc" "call" "control-center" "toggle";
+   }
    XF86AudioRaiseVolume allow-when-locked=true {
       spawn "dms" "ipc" "call" "audio" "increment" "3";
    }
@@ -420,6 +423,7 @@ bind = SUPER, comma, exec, dms ipc call settings toggle
 bind = SUPER, P, exec, dms ipc call notepad toggle
 bind = SUPERALT, L, exec, dms ipc call lock lock
 bind = SUPER, X, exec, dms ipc call powermenu toggle
+bind = SUPER, C, exec, dms ipc call control-center toggle 
 
 # Audio controls (function keys)
 bindl = , XF86AudioRaiseVolume, exec, dms ipc call audio increment 3
@@ -466,6 +470,8 @@ dms ipc call mpris next
 ```
 
 ## Theming
+
+dms will spawn a matugen process on theme changes to generate color palettes for installed and supported apps. If you do not want these files generated, you can set the env variable `DMS_DISABLE_MATUGEN=1` to disable it entirely.
 
 ### Custom Themes
 
@@ -602,6 +608,13 @@ You can enable the dynamic color schemes in supported terminal apps by modifying
 
 ```bash
 echo "config-file = ./config-dankcolors" >> ~/.config/ghostty/config
+```
+
+If you want to disable excessive config reloaded popup sin ghostty, you may wish to also add this:
+
+```bash
+# These are the default danklinux options, if you still want config reloaded and copied to clipboard popups you can skip it.
+echo "app-notifications = no-clipboard-copy,no-config-reload" >> ~/.config/ghostty/config
 ```
 
 **kitty**:

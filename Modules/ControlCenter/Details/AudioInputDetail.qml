@@ -7,11 +7,16 @@ import qs.Services
 import qs.Widgets
 
 Rectangle {
-    implicitHeight: headerRow.height + volumeSlider.height + audioContent.height + Theme.spacingM
+    property bool hasInputVolumeSliderInCC: {
+        const widgets = SettingsData.controlCenterWidgets || []
+        return widgets.some(widget => widget.id === "inputVolumeSlider")
+    }
+
+    implicitHeight: headerRow.height + (hasInputVolumeSliderInCC ? 0 : volumeSlider.height) + audioContent.height + Theme.spacingM
     radius: Theme.cornerRadius
-    color: Qt.rgba(Theme.surfaceVariant.r, Theme.surfaceVariant.g, Theme.surfaceVariant.b, Theme.getContentBackgroundAlpha() * 0.6)
+    color: Theme.surfaceContainerHigh
     border.color: Qt.rgba(Theme.outline.r, Theme.outline.g, Theme.outline.b, 0.08)
-    border.width: 1
+    border.width: 0
     
     Row {
         id: headerRow
@@ -33,11 +38,8 @@ Rectangle {
         }
     }
     
-    DankSlider {
+    Row {
         id: volumeSlider
-
-        readonly property real actualVolumePercent: AudioService.source && AudioService.source.audio ? Math.round(AudioService.source.audio.volume * 100) : 0
-
         anchors.left: parent.left
         anchors.right: parent.right
         anchors.top: headerRow.bottom
@@ -45,36 +47,60 @@ Rectangle {
         anchors.rightMargin: Theme.spacingM
         anchors.topMargin: Theme.spacingXS
         height: 35
-        value: AudioService.source && AudioService.source.audio ? Math.min(100, Math.round(AudioService.source.audio.volume * 100)) : 0
-        minimum: 0
-        maximum: 100
-        leftIcon: {
-            if (!AudioService.source || !AudioService.source.audio) return "mic_off"
-            let muted = AudioService.source.audio.muted
-            return muted ? "mic_off" : "mic"
-        }
-        rightIcon: "volume_up"
-        enabled: AudioService.source && AudioService.source.audio
-        unit: "%"
-        showValue: true
-        valueOverride: actualVolumePercent
-        visible: AudioService.source && AudioService.source.audio
-        thumbOutlineColor: Theme.surfaceContainer
+        spacing: 0
+        visible: !hasInputVolumeSliderInCC
 
-        onSliderValueChanged: function(newValue) {
-            if (AudioService.source && AudioService.source.audio) {
-                AudioService.source.audio.volume = newValue / 100
+        Rectangle {
+            width: Theme.iconSize + Theme.spacingS * 2
+            height: Theme.iconSize + Theme.spacingS * 2
+            anchors.verticalCenter: parent.verticalCenter
+            radius: (Theme.iconSize + Theme.spacingS * 2) / 2
+            color: iconArea.containsMouse ? Qt.rgba(Theme.primary.r, Theme.primary.g, Theme.primary.b, 0.12) : "transparent"
+
+            MouseArea {
+                id: iconArea
+                anchors.fill: parent
+                hoverEnabled: true
+                cursorShape: Qt.PointingHandCursor
+                onClicked: {
+                    if (AudioService.source && AudioService.source.audio) {
+                        AudioService.source.audio.muted = !AudioService.source.audio.muted
+                    }
+                }
+            }
+
+            DankIcon {
+                anchors.centerIn: parent
+                name: {
+                    if (!AudioService.source || !AudioService.source.audio) return "mic_off"
+                    let muted = AudioService.source.audio.muted
+                    return muted ? "mic_off" : "mic"
+                }
+                size: Theme.iconSize
+                color: AudioService.source && AudioService.source.audio && !AudioService.source.audio.muted && AudioService.source.audio.volume > 0 ? Theme.primary : Theme.surfaceText
             }
         }
-        
-        MouseArea {
-            anchors.left: parent.left
+
+        DankSlider {
+            readonly property real actualVolumePercent: AudioService.source && AudioService.source.audio ? Math.round(AudioService.source.audio.volume * 100) : 0
+
             anchors.verticalCenter: parent.verticalCenter
-            width: Theme.iconSize + Theme.spacingS * 2
-            height: parent.height
-            onClicked: {
+            width: parent.width - (Theme.iconSize + Theme.spacingS * 2)
+            enabled: AudioService.source && AudioService.source.audio
+            minimum: 0
+            maximum: 100
+            value: AudioService.source && AudioService.source.audio ? Math.min(100, Math.round(AudioService.source.audio.volume * 100)) : 0
+            showValue: true
+            unit: "%"
+            valueOverride: actualVolumePercent
+            thumbOutlineColor: Theme.surfaceVariant
+
+            onSliderValueChanged: function(newValue) {
                 if (AudioService.source && AudioService.source.audio) {
-                    AudioService.source.audio.muted = !AudioService.source.audio.muted
+                    AudioService.source.audio.volume = newValue / 100
+                    if (newValue > 0 && AudioService.source.audio.muted) {
+                        AudioService.source.audio.muted = false
+                    }
                 }
             }
         }
@@ -82,12 +108,12 @@ Rectangle {
     
     DankFlickable {
         id: audioContent
-        anchors.top: volumeSlider.bottom
+        anchors.top: hasInputVolumeSliderInCC ? headerRow.bottom : volumeSlider.bottom
         anchors.left: parent.left
         anchors.right: parent.right
         anchors.bottom: parent.bottom
         anchors.margins: Theme.spacingM
-        anchors.topMargin: Theme.spacingS
+        anchors.topMargin: hasInputVolumeSliderInCC ? Theme.spacingM : Theme.spacingS
         contentHeight: audioColumn.height
         clip: true
         
@@ -108,9 +134,9 @@ Rectangle {
                     width: parent.width
                     height: 50
                     radius: Theme.cornerRadius
-                    color: deviceMouseArea.containsMouse ? Qt.rgba(Theme.primary.r, Theme.primary.g, Theme.primary.b, 0.08) : Qt.rgba(Theme.surfaceVariant.r, Theme.surfaceVariant.g, Theme.surfaceVariant.b, index % 2 === 0 ? 0.3 : 0.2)
+                    color: deviceMouseArea.containsMouse ? Qt.rgba(Theme.primary.r, Theme.primary.g, Theme.primary.b, 0.08) : Theme.surfaceContainerHighest
                     border.color: modelData === AudioService.source ? Theme.primary : Qt.rgba(Theme.outline.r, Theme.outline.g, Theme.outline.b, 0.12)
-                    border.width: modelData === AudioService.source ? 2 : 1
+                    border.width: 0
                     
                     Row {
                         anchors.left: parent.left
@@ -167,14 +193,6 @@ Rectangle {
                                 Pipewire.preferredDefaultAudioSource = modelData
                             }
                         }
-                    }
-                    
-                    Behavior on color {
-                        ColorAnimation { duration: Theme.shortDuration }
-                    }
-                    
-                    Behavior on border.color {
-                        ColorAnimation { duration: Theme.shortDuration }
                     }
                 }
             }

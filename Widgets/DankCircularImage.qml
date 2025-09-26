@@ -72,16 +72,6 @@ Rectangle {
         visible: internalImage.status !== Image.Ready && root.imageSource === "" && root.fallbackIcon !== ""
     }
 
-    Rectangle {
-        anchors.fill: parent
-        anchors.margins: 0
-        radius: width / 2
-        color: "transparent"
-        border.color: Theme.popupBackground()
-        border.width: 3
-        visible: root.hasImage && internalImage.status === Image.Ready
-        antialiasing: true
-    }
 
     StyledText {
         anchors.centerIn: parent

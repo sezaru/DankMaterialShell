@@ -1,5 +1,4 @@
 import QtQuick
-import QtQuick.Controls
 import Quickshell
 import qs.Common
 import qs.Widgets
@@ -28,21 +27,24 @@ Rectangle {
         return Theme.isLightMode ? Qt.darker(base, factor) : Qt.lighter(base, factor)
     }
 
-    readonly property color _containerBg:
-        Qt.rgba(Theme.surfaceVariant.r, Theme.surfaceVariant.g, Theme.surfaceVariant.b,
-                Theme.getContentBackgroundAlpha() * 0.60)
+    readonly property color _containerBg: Theme.surfaceContainerHigh
 
-    color: _containerBg
+    color: {
+        const baseColor = bodyMouse.containsMouse ? Theme.widgetBaseHoverColor : _containerBg
+        return baseColor
+    }
     border.color: Qt.rgba(Theme.outline.r, Theme.outline.g, Theme.outline.b, 0.10)
-    border.width: 1
-    layer.enabled: true
-    layer.samples: 8
+    border.width: 0
+    antialiasing: true
 
     readonly property color _labelPrimary: Theme.surfaceText
     readonly property color _labelSecondary: Theme.surfaceVariantText
     readonly property color _tileBgActive: Theme.primary
-    readonly property color _tileBgInactive:
-        Qt.rgba(Theme.surface.r, Theme.surface.g, Theme.surface.b, 0.85)
+    readonly property color _tileBgInactive: {
+        const transparency = Theme.popupTransparency || 0.92
+        const surface = Theme.surfaceContainer || Qt.rgba(0.1, 0.1, 0.1, 1)
+        return Qt.rgba(surface.r, surface.g, surface.b, transparency)
+    }
     readonly property color _tileRingActive:
         Qt.rgba(Theme.primaryText.r, Theme.primaryText.g, Theme.primaryText.b, 0.22)
     readonly property color _tileRingInactive:
@@ -62,6 +64,7 @@ Rectangle {
         visible: false
         color: hoverTint(_containerBg)
         opacity: 0.08
+        antialiasing: true
         Behavior on opacity { NumberAnimation { duration: Theme.shortDuration } }
     }
 
@@ -82,6 +85,7 @@ Rectangle {
             color: isActive ? _tileBgActive : _tileBgInactive
             border.color: isActive ? _tileRingActive : "transparent"
             border.width: isActive ? 1 : 0
+            antialiasing: true
 
             Rectangle {
                 anchors.fill: parent
@@ -89,6 +93,7 @@ Rectangle {
                 color: hoverTint(iconTile.color)
                 opacity: tileMouse.pressed ? 0.3 : (tileMouse.containsMouse ? 0.2 : 0.0)
                 visible: opacity > 0
+                antialiasing: true
                 Behavior on opacity { NumberAnimation { duration: Theme.shortDuration } }
             }
 
